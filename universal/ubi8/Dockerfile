@@ -99,14 +99,16 @@ RUN dnf install -y go-toolset  && \
     go install golang.org/x/tools/gopls@master golang.org/x/tools@master
 
 # Python
-RUN dnf -y install python3 python3-devel python3-setuptools python3-pip nss_wrapper && \
+RUN dnf -y module enable python39:3.9 && \
+    dnf -y update && \
+    dnf -y install python39 python39-devel python39-setuptools python39-pip nss_wrapper && \
     dnf -y clean all --enablerepo='*'
 
 RUN cd /usr/bin \
-    && if [ ! -L python ]; then ln -s python3 python; fi \
-    && if [ ! -L pydoc ]; then ln -s pydoc3 pydoc; fi \
-    && if [ ! -L python-config ]; then ln -s python3-config python-config; fi \
-    && if [ ! -L pip ]; then ln -s pip-3 pip; fi
+    && if [ ! -L python ]; then ln -s python3.9 python; fi \
+    && if [ ! -L pydoc ]; then ln -s pydoc3.9 pydoc; fi \
+    && if [ ! -L python-config ]; then ln -s python3.9-config python-config; fi \
+    && if [ ! -L pip ]; then ln -s pip-3.9 pip; fi
 
 RUN pip install pylint yq
 
