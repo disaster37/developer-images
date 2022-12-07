@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.3-labs
 
-FROM quay.io/devfile/base-developer-image:ubi8-latest
+FROM quay.io/webcenter/developer-image:base-ubi8-latest
 LABEL maintainer="Red Hat, Inc."
 
 LABEL com.redhat.component="devfile-universal-container"
@@ -96,7 +96,7 @@ RUN dnf -y install llvm-toolset gcc gcc-c++ clang clang-libs clang-tools-extra g
 # Go
 RUN dnf install -y go-toolset  && \
     dnf -y clean all --enablerepo='*' && \
-    GO111MODULE=on go get -v golang.org/x/tools/gopls@master golang.org/x/tools@master
+    go install golang.org/x/tools/gopls@master golang.org/x/tools@master
 
 # Python
 RUN dnf -y module enable python39:3.9 && \

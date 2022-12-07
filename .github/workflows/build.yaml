@@ -11,7 +11,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - id: set-matrix
         run: echo "::set-output name=matrix::$(ls base | jq -R -s -c 'split("\n")[:-1]')"
   list-manifests-universal:
@@ -19,7 +19,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - id: set-matrix
         run: echo "::set-output name=matrix::$(ls universal | jq -R -s -c 'split("\n")[:-1]')"
 
@@ -33,7 +33,7 @@ jobs:
         manifest: ${{ fromJson(needs.list-manifests-base.outputs.matrix) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v3
@@ -75,7 +75,7 @@ jobs:
         manifest: ${{ fromJson(needs.list-manifests-universal.outputs.matrix) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v3

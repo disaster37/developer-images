@@ -40,14 +40,13 @@ RUN dnf install -y libXext libXrender libXtst libXi
 ENV GOPATH /go
 ENV PATH $GOPATH/bin:$PATH
 ENV GOCACHE /.cache
-ENV GOROOT /usr/local/go
 
 RUN <<EOF
 set -euf -o pipefail
 GO_VERSION=1.19.4
-mkdir /go /.cache /usr/local/go
-chmod -R 777 /.cache /usr/local/go
+mkdir /go /.cache
 curl -o- -L https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz | tar xz -C /go --strip-components=1
+chmod -R 777 /.cache /go
 
 go install github.com/acroca/go-symbols@latest &&\
 go install github.com/cweill/gotests/gotests@latest &&\
@@ -65,7 +64,7 @@ go install honnef.co/go/tools/cmd/staticcheck@latest &&\
 go install golang.org/x/tools/cmd/gorename@latest &&\
 go install github.com/go-delve/delve/cmd/dlv@latest &&\
 go install golang.org/x/tools/gopls@latest &&\
-cd /usr/local/go && wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.46.2
+cd /go && wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.46.2
 EOF
 
 # Python
