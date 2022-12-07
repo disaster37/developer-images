@@ -37,12 +37,36 @@ USER 0
 RUN dnf install -y libXext libXrender libXtst libXi
 
 # Go
-ENV GO_VERSION=1.19.4
-RUN mkdir /go &&\
-    curl -o- -L https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz | tar xz -C /go --strip-components=1
 ENV GOPATH /go
 ENV PATH $GOPATH/bin:$PATH
-RUN 
+ENV GOCACHE /.cache
+ENV GOROOT /usr/local/go
+
+RUN <<EOF
+set -euf -o pipefail
+GO_VERSION=1.19.4
+mkdir /go /.cache /usr/local/go
+chmod -R 777 /.cache /usr/local/go
+curl -o- -L https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz | tar xz -C /go --strip-components=1
+
+go install github.com/acroca/go-symbols@latest &&\
+go install github.com/cweill/gotests/gotests@latest &&\
+go install github.com/davidrjenni/reftools/cmd/fillstruct@latest &&\
+go install github.com/haya14busa/goplay/cmd/goplay@latest &&\
+go install github.com/stamblerre/gocode@latest &&\
+mv /go/bin/gocode /go/bin/gocode-gomod &&\
+go install github.com/mdempsky/gocode@latest &&\
+go install github.com/ramya-rao-a/go-outline@latest &&\
+go install github.com/rogpeppe/godef@latest &&\
+go install github.com/sqs/goreturns@latest &&\
+go install github.com/uudashr/gopkgs/v2/cmd/gopkgs@latest &&\
+go install github.com/zmb3/gogetdoc@latest &&\
+go install honnef.co/go/tools/cmd/staticcheck@latest &&\
+go install golang.org/x/tools/cmd/gorename@latest &&\
+go install github.com/go-delve/delve/cmd/dlv@latest &&\
+go install golang.org/x/tools/gopls@latest &&\
+cd /usr/local/go && wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.46.2
+EOF
 
 # Python
 RUN dnf -y module enable python39:3.9 && \
@@ -286,6 +310,26 @@ set -euf -o pipefail
 PLUTO_VERSION="5.7.0"
 curl -o- -L https://github.com/FairwindsOps/pluto/releases/download/v${PLUTO_VERSION}/pluto_${PLUTO_VERSION}_linux_amd64.tar.gz | tar xvz -C /usr/local/bin --strip-components=0
 chmod +x /usr/local/bin/pluto
+EOF
+
+## rancher
+RUN <<EOF
+set -euf -o pipefail
+RANCHER_VERSION="v2.4.6"
+curl -o- -L https://github.com/rancher/cli/releases/download/${RANCHER_VERSION}/rancher-linux-amd64-${RANCHER_VERSION}.tar.gz | tar xvz -C /usr/local/bin --strip-components=2
+chmod +x /usr/local/bin/rancher
+EOF
+
+## vault
+RUN <<EOF
+set -euf -o pipefail
+VAULT_VERSION="1.9.2"
+TEMP_DIR="$(mktemp -d)"
+curl -L https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip -o ${TEMP_DIR}/vault.zip
+cd ${TEMP_DIR}
+unzip vault.zip &&\
+mv vault /usr/bin/vault &&\
+chmod +x /usr/bin/vault &&
 EOF
 
 ## docker
