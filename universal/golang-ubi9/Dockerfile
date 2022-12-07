@@ -75,18 +75,10 @@ RUN dnf -y install python3 python3-devel python3-setuptools python3-pip nss_wrap
 RUN cd /usr/bin \
     && if [ ! -L python ]; then ln -s python3 python; fi \
     && if [ ! -L pydoc ]; then ln -s pydoc3 pydoc; fi \
-    && if [ ! -L python-config ]; then ln -s python3-config python-config; fi \
-    && if [ ! -L pip ]; then ln -s pip-3 pip; fi
+    && if [ ! -L python-config ]; then ln -s python3-config python-config; fi
 
 RUN pip install pylint yq
 
-RUN cd /usr/bin \
-    && if [ ! -L python ]; then ln -s python3.9 python; fi \
-    && if [ ! -L pydoc ]; then ln -s pydoc3.9 pydoc; fi \
-    && if [ ! -L python-config ]; then ln -s python3.9-config python-config; fi \
-    && if [ ! -L pip ]; then ln -s pip-3.9 pip; fi
-
-RUN pip install pylint yq
 
 # Configuration manager
 
