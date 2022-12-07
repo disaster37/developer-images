@@ -1,15 +1,36 @@
 
-name: Build of UBI 8 based Developer Images
+name: Build Developer Images
 
 on:
   push:
     branches: [ main ]
 
 jobs:
+  list-manifests-base:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: set-matrix
+        run: echo "::set-output name=matrix::$(ls base | jq -R -s -c 'split("\n")[:-1]')"
+  list-manifests-universal:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: set-matrix
+        run: echo "::set-output name=matrix::$(ls universal | jq -R -s -c 'split("\n")[:-1]')"
 
-  build_base_ubi8_image:
+  build_base_image:
     name: Build and publish base ubi8 image to Quay.io
     runs-on: ubuntu-20.04
+    needs: list-manifests-base
+    strategy:
+      fail-fast: false
+      matrix:
+        manifest: ${{ fromJson(needs.list-manifests-base.outputs.matrix) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -18,12 +39,12 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: |
-            quay.io/devfile/base-developer-image
+            quay.io/webcenter/developer-image
           flavor: |
             latest=true
-            prefix=ubi8-,onlatest=true
+            prefix=base-${{ matrix.manifest }}-,onlatest=true
           tags: |
-            type=sha,prefix=ubi8-,format=short
+            type=sha,prefix=base-${{ matrix.manifest }}-,format=short
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -38,13 +59,20 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: ${{ github.event_name != 'pull_request' }}
-          context: base/ubi8
+          context: base/${{ matrix.manifest }}
           tags: |
             ${{ steps.meta.outputs.tags }}
 
-  build_universal_ubi8_image:
+  build_universal_image:
     name: Build and publish universal ubi8 image to Quay.io
     runs-on: ubuntu-20.04
+    needs: 
+      - list-manifests-universal
+      - build_base_image
+    strategy:
+      fail-fast: false
+      matrix:
+        manifest: ${{ fromJson(needs.list-manifests-universal.outputs.matrix) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -56,9 +84,9 @@ jobs:
             quay.io/devfile/universal-developer-image
           flavor: |
             latest=true
-            prefix=ubi8-,onlatest=true
+            prefix=${{ matrix.manifest }}-,onlatest=true
           tags: |
-            type=sha,prefix=ubi8-,format=short
+            type=sha,prefix=${{ matrix.manifest }}-,format=short
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -73,6 +101,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: ${{ github.event_name != 'pull_request' }}
-          context: universal/ubi8
+          context: universal/${{ matrix.manifest }}
           tags: |
             ${{ steps.meta.outputs.tags }}
