@@ -101,10 +101,7 @@ RUN curl -L https://mirror.openshift.com/pub/openshift-v4/clients/oc/${OC_VERSIO
     && chmod +x /usr/local/bin/oc
 
 ## podman buildah skopeo
-RUN dnf -y module enable container-tools:rhel8 && \ 
-    dnf -y update && \
-    dnf -y reinstall shadow-utils && \
-    dnf -y install podman buildah skopeo fuse-overlayfs && \
+RUN dnf -y install podman buildah skopeo fuse-overlayfs && \
     dnf -y clean all --enablerepo='*'
 
 # Set up environment variables to note that this is
@@ -308,9 +305,9 @@ EOF
 ## buildkit
 RUN <<EOF
 set -euf -o pipefail
-BUILDKIT_VERSION="0.1.5"
+BUILDKIT_VERSION="0.1.6"
 curl -L  https://github.com/vmware-tanzu/buildkit-cli-for-kubectl/releases/download/v${BUILDKIT_VERSION}/kubectl-buildkit-${BUILDKIT_VERSION}-1.el7.x86_64.rpm -o /tmp/kubectl-buildkit.rpm
-rpm -i /tmp/kubectl-buildkit.rpm &&\
+rpm -i /tmp/kubectl-buildkit.rpm
 EOF
 
 ## pluto
@@ -336,9 +333,9 @@ VAULT_VERSION="1.9.2"
 TEMP_DIR="$(mktemp -d)"
 curl -L https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip -o ${TEMP_DIR}/vault.zip
 cd ${TEMP_DIR}
-unzip vault.zip &&\
-mv vault /usr/bin/vault &&\
-chmod +x /usr/bin/vault &&
+unzip vault.zip
+mv vault /usr/bin/vault
+chmod +x /usr/bin/vault
 EOF
 
 ## docker
@@ -384,31 +381,6 @@ cd -
 rm -rf "${TEMP_DIR}"
 EOF
 
-# e2fsprogs setup
-# Since e2fsprogs-static package has removed RHEL 8 distribution, it is not possible to install from the repository
-# https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/considerations_in_adopting_rhel_8/index#removed-packages_changes-to-packages
-RUN <<EOF
-set -euf -o pipefail
-TEMP_DIR="$(mktemp -d)"
-cd "${TEMP_DIR}"
-E2FSPROGS_VERSION="1.46.5"
-E2FSPROGS_TGZ="e2fsprogs-${E2FSPROGS_VERSION}.tar.gz"
-E2FSPROGS_TGZ_URL="https://mirrors.edge.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v${E2FSPROGS_VERSION}/${E2FSPROGS_TGZ}"
-E2FSPROGS_CHEKSUMS_URL="https://mirrors.edge.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v${E2FSPROGS_VERSION}/sha256sums.asc"
-curl -sSLO "${E2FSPROGS_TGZ_URL}"
-curl -sSLO "${E2FSPROGS_CHEKSUMS_URL}"
-sha256sum --ignore-missing -c "sha256sums.asc" 2>&1 | grep OK
-tar -zxvf "${E2FSPROGS_TGZ}"
-cd "e2fsprogs-${E2FSPROGS_VERSION}"
-mkdir build
-cd build
-../configure --prefix=/usr --with-root-prefix="" --enable-elf-shlibs --disable-evms
-make
-make install
-make install-libs
-cd -
-rm -rf "${TEMP_DIR}"
-EOF
 
 # Set permissions on /etc/passwd and /home to allow arbitrary users to write
 RUN mkdir -p /home/user && chgrp -R 0 /home && chmod -R g=u /etc/passwd /etc/group /home

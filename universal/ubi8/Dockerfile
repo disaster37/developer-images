@@ -174,8 +174,8 @@ ENV _BUILDAH_STARTED_IN_USERNS="" BUILDAH_ISOLATION=chroot
 # Tweaks to make rootless buildah work
 RUN touch /etc/subgid /etc/subuid  && \
     chmod g=u /etc/subgid /etc/subuid /etc/passwd  && \
-    echo user:10000:65536 > /etc/subuid  && \
-    echo user:10000:65536 > /etc/subgid
+    echo user:1234:65536 > /etc/subuid  && \
+    echo user:1234:65536 > /etc/subgid
 
 # Adjust storage.conf to enable Fuse storage.
 RUN sed -i -e 's|^#mount_program|mount_program|g' -e '/additionalimage.*/a "/var/lib/shared",' /etc/containers/storage.conf
@@ -420,4 +420,4 @@ EOF
 # Set permissions on /etc/passwd and /home to allow arbitrary users to write
 RUN mkdir -p /home/user && chgrp -R 0 /home && chmod -R g=u /etc/passwd /etc/group /home
 
-USER 10001
+USER 1234
