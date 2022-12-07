@@ -81,11 +81,22 @@ RUN cd /usr/bin \
 
 RUN pip install pylint yq
 
+# Configuration manager
 
+## Ansible
+RUN <<EOF
+set -euf -o pipefail
+python3 -m pip install ansible
+python3 -m pip install molecule
+python3 -m pip install "molecule[docker]"
+python3 -m pip install "pytest-testinfra"
+python3 -m pip install "molecule-goss"
+python3 -m pip install "flake8"
+EOF
 
 # Cloud
 
-# oc
+## oc
 ENV OC_VERSION=4.6
 RUN curl -L https://mirror.openshift.com/pub/openshift-v4/clients/oc/${OC_VERSION}/linux/oc.tar.gz | tar -C /usr/local/bin -xz \
     && chmod +x /usr/local/bin/oc
