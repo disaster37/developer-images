@@ -36,11 +36,13 @@ USER 0
 # Required packages for AWT
 RUN dnf install -y libXext libXrender libXtst libXi
 
-
 # Go
-RUN dnf install -y go-toolset  && \
-    dnf -y clean all --enablerepo='*' && \
-    GO111MODULE=on go get -v golang.org/x/tools/gopls@master golang.org/x/tools@master
+ENV GO_VERSION=1.19.4
+RUN mkdir /go &&\
+    curl -o- -L https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz | tar xz -C /go --strip-components=1
+ENV GOPATH /go
+ENV PATH $GOPATH/bin:$PATH
+RUN 
 
 # Python
 RUN dnf -y module enable python39:3.9 && \
@@ -163,7 +165,7 @@ RUN <<EOF
 set -euf -o pipefail
 TEMP_DIR="$(mktemp -d)"
 cd "${TEMP_DIR}"
-HELM_VERSION="3.7.0"
+HELM_VERSION="3.7.2"
 HELM_ARCH="linux-amd64"
 HELM_TGZ="helm-v${HELM_VERSION}-${HELM_ARCH}.tar.gz"
 HELM_TGZ_URL="https://get.helm.sh/${HELM_TGZ}"
@@ -239,7 +241,7 @@ RUN <<EOF
 set -euf -o pipefail
 TEMP_DIR="$(mktemp -d)"
 cd "${TEMP_DIR}"
-TF_VERSION="1.0.7"
+TF_VERSION="1.1.2"
 TF_ARCH="linux_amd64"
 TF_ZIP="terraform_${TF_VERSION}_${TF_ARCH}.zip"
 TF_ZIP_URL="https://releases.hashicorp.com/terraform/${TF_VERSION}/${TF_ZIP}"
@@ -252,6 +254,38 @@ chmod +x terraform
 mv terraform /usr/local/bin
 cd -
 rm -rf "${TEMP_DIR}"
+EOF
+
+## terragrunt-cli
+RUN <<EOF
+set -euf -o pipefail
+TERRAGRUNT_VERSION="v0.35.16"
+curl -L https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT_VERSION}/terragrunt_linux_amd64 -o /usr/bin/terragrunt
+chmod +x /usr/bin/terragrunt
+EOF
+
+## dagger
+RUN <<EOF
+set -euf -o pipefail
+DAGGER_VERSION="v0.2.8"
+curl -o- -L https://github.com/dagger/dagger/releases/download/${DAGGER_VERSION}/dagger_${DAGGER_VERSION}_linux_amd64.tar.gz | tar xvz -C /usr/local/bin --strip-components=0
+chmod +x /usr/local/bin/dagger
+EOF
+
+## buildkit
+RUN <<EOF
+set -euf -o pipefail
+BUILDKIT_VERSION="0.1.5"
+curl -L  https://github.com/vmware-tanzu/buildkit-cli-for-kubectl/releases/download/v${BUILDKIT_VERSION}/kubectl-buildkit-${BUILDKIT_VERSION}-1.el7.x86_64.rpm -o /tmp/kubectl-buildkit.rpm
+rpm -i /tmp/kubectl-buildkit.rpm &&\
+EOF
+
+## pluto
+RUN <<EOF
+set -euf -o pipefail
+PLUTO_VERSION="5.7.0"
+curl -o- -L https://github.com/FairwindsOps/pluto/releases/download/v${PLUTO_VERSION}/pluto_${PLUTO_VERSION}_linux_amd64.tar.gz | tar xvz -C /usr/local/bin --strip-components=0
+chmod +x /usr/local/bin/pluto
 EOF
 
 ## docker
