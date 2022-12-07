@@ -22,7 +22,7 @@ USER 0
 RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm && \
     dnf update -y && \
     dnf install -y bash diffutils git git-lfs iproute jq less lsof man nano procps p7zip p7zip-plugins \
-                   perl-Digest-SHA net-tools openssh-clients rsync socat sudo time vim wget zip && \
+                   perl-Digest-SHA net-tools openssh-clients rsync socat sudo time vim wget zip direnv && \
                    dnf clean all
 
 ## gh-cli

@@ -81,7 +81,7 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: |
-            quay.io/devfile/universal-developer-image
+            quay.io/webcenter/developer-image
           flavor: |
             latest=true
             prefix=${{ matrix.manifest }}-,onlatest=true

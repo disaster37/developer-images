@@ -96,7 +96,7 @@ RUN dnf -y install llvm-toolset gcc gcc-c++ clang clang-libs clang-tools-extra g
 # Go
 RUN dnf install -y go-toolset  && \
     dnf -y clean all --enablerepo='*' && \
-    go install golang.org/x/tools/gopls@master golang.org/x/tools@master
+    go install golang.org/x/tools/gopls@latest
 
 # Python
 RUN dnf -y module enable python39:3.9 && \
