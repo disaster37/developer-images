@@ -24,7 +24,7 @@ jobs:
         run: echo "::set-output name=matrix::$(ls universal | jq -R -s -c 'split("\n")[:-1]')"
 
   build_base_image:
-    name: Build and publish base ubi8 image to Quay.io
+    name: Build and publish base image to Quay.io
     runs-on: ubuntu-20.04
     needs: list-manifests-base
     strategy:
@@ -64,7 +64,7 @@ jobs:
             ${{ steps.meta.outputs.tags }}
 
   build_universal_image:
-    name: Build and publish universal ubi8 image to Quay.io
+    name: Build and publish universal image to Quay.io
     runs-on: ubuntu-20.04
     needs: 
       - list-manifests-universal
