@@ -81,8 +81,8 @@ RUN \
 COPY --chown=0:0 entrypoint.sh /
 RUN \
     # add user and configure it
-    useradd -u 1234 -G wheel,root -d /home/user --shell /bin/bash -m user && \
-    echo "user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/wheel &&\
+    useradd -u 1234 -G root -d /home/user --shell /bin/bash -m user && \
+    echo "user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/user &&\
     # Setup $PS1 for a consistent and reasonable prompt
     echo "export PS1='\W \`git branch --show-current 2>/dev/null | sed -r -e \"s@^(.+)@\(\1\) @\"\`$ '" >> /home/user/.bashrc && \
     # Copy the global git configuration to user config as global /etc/gitconfig
