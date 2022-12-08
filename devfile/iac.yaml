@@ -1,0 +1,16 @@
+schemaVersion: 2.1.0
+metadata:
+  name: iac
+project
+components:
+  - name: tools
+    container:
+      image: quay.io/webcenter/developer-image:golang-ubi9-latest
+      memoryLimit: 2Gi
+      cpuLimit: 2000m
+      cpuRequest: 300m
+      memoryRequest: 512Mi
+      mountSources: true
+      volumeMounts:
+        - name: kube
+          path: /home/user/.kube

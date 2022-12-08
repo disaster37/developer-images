@@ -37,6 +37,7 @@ USER 0
 RUN dnf install -y libXext libXrender libXtst libXi
 
 # Go
+RUN dnf install -y gcc
 ENV GOPATH /go
 ENV PATH $GOPATH/bin:$PATH
 ENV GOCACHE /.cache

@@ -18,4 +18,11 @@ if ! whoami &> /dev/null; then
   fi
 fi
 
+# Copy and load certificats if path exist
+EXTRA_CERTICATE_PATH=/public-certs
+if [ -d $EXTRA_CERTICATE_PATH ]; then
+    sudo cp $EXTRA_CERTICATE_PATH/*.crt /usr/share/pki/ca-trust-source/anchors/
+    sudo update-ca-trust
+fi
+
 exec "$@"
