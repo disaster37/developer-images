@@ -27,5 +27,17 @@ if [ -d $EXTRA_CERTICATE_PATH ]; then
     sudo update-ca-trust
 fi
 
+# Handle persisted home
+# Need to have /profile volume on container
+if [ -d /profile ]; then
+  if [ ! -f /profile/.init-home ]; then
+    cp -r /home/user /profile/
+    touch /profile/.init-home
+  fi
+  cp -r /home/user /profile
+  rm -rf /home/user
+  ln -s /profile/user /home/user
+fi
+
 
 exec "$@"
