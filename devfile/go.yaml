@@ -2,9 +2,15 @@ schemaVersion: 2.1.0
 metadata:
   name: golang-
 components:
+  - name: home
+    volume:
+      size: 1Gi
   - name: tools
     container:
       image: quay.io/webcenter/developer-image:golang-ubi9-latest
+      command:
+        - /entrypoint.sh
+        - /checode/entrypoint-volume.sh
       env:
         - name: GOPATH
           value: /projects:/home/user/go
@@ -18,6 +24,9 @@ components:
       cpuRequest: 1000m
       memoryRequest: 2Gi
       mountSources: true
+      volumeMounts:
+        - name: home
+          path: /profile
 
 commands:
   - id: run

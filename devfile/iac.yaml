@@ -3,6 +3,9 @@ metadata:
   name: iac
 project
 components:
+  - name: home
+    volume:
+      size: 1Gi
   - name: tools
     container:
       image: quay.io/webcenter/developer-image:golang-ubi9-latest
@@ -11,6 +14,9 @@ components:
       cpuRequest: 300m
       memoryRequest: 512Mi
       mountSources: true
+      command:
+        - /entrypoint.sh
+        - /checode/entrypoint-volume.sh
       volumeMounts:
-        - name: kube
-          path: /home/user/.kube
+        - name: home
+          path: /profile
