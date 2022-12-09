@@ -41,6 +41,7 @@ RUN dnf install -y gcc
 ENV GOPATH /go
 ENV PATH $GOPATH/bin:$PATH
 ENV GOCACHE /.cache
+ENV GOROOT /go
 
 RUN <<EOF
 set -euf -o pipefail
