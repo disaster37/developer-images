@@ -39,15 +39,16 @@ RUN dnf install -y libXext libXrender libXtst libXi
 # Go
 RUN dnf install -y gcc
 ENV GOROOT /go
-ENV PATH $GOROOT/bin:$PATH
+ENV GOPATH /projects
+ENV PATH $GOPATH/bin:$PATH
 ENV GOCACHE /.cache
 
 RUN <<EOF
 set -euf -o pipefail
 GO_VERSION=1.19.4
-mkdir /go /.cache
+mkdir /go /.cache /projects
 curl -o- -L https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz | tar xz -C /go --strip-components=1
-chmod -R 777 /.cache /go
+chmod -R 777 /.cache /go /projects
 
 go install github.com/acroca/go-symbols@latest &&\
 go install github.com/cweill/gotests/gotests@latest &&\
