@@ -40,7 +40,7 @@ RUN dnf install -y libXext libXrender libXtst libXi
 RUN dnf install -y gcc
 ENV GOROOT /go
 ENV GOPATH /projects
-ENV PATH $GOPATH/bin:$PATH
+ENV PATH $GOROOT/bin:$PATH
 ENV GOCACHE /.cache
 
 RUN <<EOF
