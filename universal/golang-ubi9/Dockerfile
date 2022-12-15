@@ -66,10 +66,9 @@ go install honnef.co/go/tools/cmd/staticcheck@latest &&\
 go install golang.org/x/tools/cmd/gorename@latest &&\
 go install github.com/go-delve/delve/cmd/dlv@latest &&\
 go install golang.org/x/tools/gopls@latest &&\
-cd /go && wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.46.2
+cd /go && wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.50.1
 EOF
 
-# Python
 # Python
 RUN dnf -y install python3 python3-devel python3-setuptools python3-pip nss_wrapper && \
     dnf -y clean all --enablerepo='*'
