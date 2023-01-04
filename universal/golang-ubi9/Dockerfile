@@ -39,7 +39,6 @@ RUN dnf install -y libXext libXrender libXtst libXi
 # Go
 RUN dnf install -y gcc
 ENV GOROOT /go
-ENV GOPATH /projects
 ENV PATH $GOROOT/bin:$PATH
 ENV GOCACHE /.cache
 
@@ -68,6 +67,8 @@ go install github.com/go-delve/delve/cmd/dlv@latest &&\
 go install golang.org/x/tools/gopls@latest &&\
 cd /go && wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.50.1
 EOF
+ENV GOPATH /projects
+ENV PATH $GOPATH/bin:$PATH
 
 # Python
 RUN dnf -y install python3 python3-devel python3-setuptools python3-pip nss_wrapper && \
