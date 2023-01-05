@@ -31,7 +31,6 @@ RUN <<EOF
 DIRENV_VERSION=2.32.2
 curl -L https://github.com/direnv/direnv/releases/download/v${DIRENV_VERSION}/direnv.linux-amd64 -o /usr/bin/direnv
 chmod +x /usr/bin/direnv
-echo 'eval "$(direnv hook bash)"' >> /home/user/.bashrc
 EOF
 
 ## gh-cli
@@ -86,6 +85,7 @@ RUN \
     echo "user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/user &&\
     # Setup $PS1 for a consistent and reasonable prompt
     echo "export PS1='\W \`git branch --show-current 2>/dev/null | sed -r -e \"s@^(.+)@\(\1\) @\"\`$ '" >> /home/user/.bashrc && \
+    echo 'eval "$(direnv hook bash)"' >> /home/user/.bashrc &&\
     # Copy the global git configuration to user config as global /etc/gitconfig
     #  file may be overwritten by a mounted file at runtime
     cp /etc/gitconfig /home/user/.gitconfig && \
