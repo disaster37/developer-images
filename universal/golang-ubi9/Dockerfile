@@ -81,6 +81,9 @@ RUN cd /usr/bin \
 
 RUN pip install pylint yq
 
+# Java JRE to lauch java app
+RUN dnf install -y java-17-openjdk-headless
+
 
 # Configuration manager
 
