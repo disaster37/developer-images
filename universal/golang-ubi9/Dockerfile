@@ -39,6 +39,7 @@ RUN dnf install -y libXext libXrender libXtst libXi
 # Go
 RUN dnf install -y gcc
 ENV GOROOT /go
+ENV GOPATH /go
 ENV PATH $GOROOT/bin:$PATH
 ENV GOCACHE /.cache
 
