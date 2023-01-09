@@ -34,7 +34,6 @@ if [ -d /profile ]; then
     cp -r /home/user /profile/
     touch /profile/.init-home
   fi
-  cp -r /home/user /profile
   rm -rf /home/user
   ln -s /profile/user /home/user
 fi
