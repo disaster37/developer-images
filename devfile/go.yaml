@@ -29,6 +29,7 @@ components:
           path: /profile
   - name: docker
     kubernetes:
+      deployByDefault: true
       inlined: |
         apiVersion: v1
         kind: List
