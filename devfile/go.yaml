@@ -1,4 +1,4 @@
-schemaVersion: 2.1.0
+schemaVersion: 2.2.0
 metadata:
   name: golang-
 components:
@@ -32,42 +32,39 @@ components:
       deployByDefault: true
       inlined: |
         apiVersion: v1
-        kind: List
-        items:
-          - apiVersion: v1
-            kind: Deployment
+        kind: Deployment
+        metadata:
+          name: docker
+          labels:
+            app: docker
+        spec:
+          selector:
+            matchLabels:
+              app: docker
+          template:
             metadata:
-              name: docker
               labels:
                 app: docker
             spec:
-              selector:
-                matchLabels:
-                  app: docker
-              template:
-                metadata:
-                  labels:
-                    app: docker
-                spec:
-                  containers:
-                    - image: docker:dind
-                      name: docker
-                      env:
-                        - name: 'DOCKER_TLS_CERTDIR'
-                      ports:
-                        - name: tcp
-                          containerPort: 2375
-                      securityContext:
-                        allowPrivilegeEscalation: true
-                        privileged: true
-                        runAsUser: 0
-                      imagePullPolicy: Always
-                      volumeMounts:
-                        - mountPath: /var/lib/docker
-                          name: docker-storage
-                  volumes:
-                    - emptyDir: {}
+              containers:
+                - image: docker:dind
+                  name: docker
+                  env:
+                    - name: 'DOCKER_TLS_CERTDIR'
+                  ports:
+                    - name: tcp
+                      containerPort: 2375
+                  securityContext:
+                    allowPrivilegeEscalation: true
+                    privileged: true
+                    runAsUser: 0
+                  imagePullPolicy: Always
+                  volumeMounts:
+                    - mountPath: /var/lib/docker
                       name: docker-storage
+              volumes:
+                - emptyDir: {}
+                  name: docker-storage
 
 commands:
   - id: run
