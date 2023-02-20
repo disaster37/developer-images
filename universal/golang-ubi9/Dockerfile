@@ -339,7 +339,7 @@ RUN <<EOF
 set -euf -o pipefail
 TEMP_DIR="$(mktemp -d)"
 cd "${TEMP_DIR}"
-DOCKER_VERSION="20.10.8"
+DOCKER_VERSION="23.0.1"
 DOCKER_ARCH="x86_64"
 DOCKER_TGZ="docker-${DOCKER_VERSION}.tgz"
 DOCKER_TGZ_URL="https://download.docker.com/linux/static/stable/${DOCKER_ARCH}/${DOCKER_TGZ}"
