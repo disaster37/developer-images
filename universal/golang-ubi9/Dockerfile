@@ -345,16 +345,7 @@ DOCKER_TGZ="docker-${DOCKER_VERSION}.tgz"
 DOCKER_TGZ_URL="https://download.docker.com/linux/static/stable/${DOCKER_ARCH}/${DOCKER_TGZ}"
 curl -sSLO "${DOCKER_TGZ_URL}"
 tar -zxvf "${DOCKER_TGZ}"
-mv docker/docker-proxy \
-    docker/containerd \
-    docker/dockerd \
-    docker/docker \
-    docker/containerd-shim-runc-v2 \
-    docker/ctr \
-    docker/docker-init \
-    docker/runc \
-    docker/containerd-shim \
-    /usr/local/bin/
+mv docker/* /usr/local/bin/
 cd -
 rm -rf "${TEMP_DIR}"
 EOF
