@@ -336,7 +336,7 @@ EOF
 
 ## docker
 RUN <<EOF
-set -euf -o pipefail
+set -e
 TEMP_DIR="$(mktemp -d)"
 cd "${TEMP_DIR}"
 DOCKER_VERSION="23.0.1"
