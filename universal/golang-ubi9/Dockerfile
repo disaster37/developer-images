@@ -336,18 +336,11 @@ EOF
 
 ## docker
 RUN <<EOF
-set -e
-TEMP_DIR="$(mktemp -d)"
-cd "${TEMP_DIR}"
-DOCKER_VERSION="23.0.1"
-DOCKER_ARCH="x86_64"
-DOCKER_TGZ="docker-${DOCKER_VERSION}.tgz"
-DOCKER_TGZ_URL="https://download.docker.com/linux/static/stable/${DOCKER_ARCH}/${DOCKER_TGZ}"
-curl -sSLO "${DOCKER_TGZ_URL}"
-tar -zxvf "${DOCKER_TGZ}"
-mv docker/* /usr/local/bin/
-cd -
-rm -rf "${TEMP_DIR}"
+set -euf -o pipefail
+
+dnf install -y yum-utils
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+dnf install -y docker-ce docker-ce-cli containerd.io
 EOF
 
 ## compose
