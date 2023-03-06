@@ -102,7 +102,7 @@ EOF
 ## Puppet
 RUN <<EOF
 set -e
-rpm -Uvh https://yum.puppet.com/puppet6/puppet6-release-el-8.noarch.rpm
+rpm -Uvh http://yum.puppetlabs.com/puppet6-release-el-9.noarch.rpm
 dnf install -y pdk puppet-agent puppet-bolt
 EOF
 
