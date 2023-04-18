@@ -13,10 +13,10 @@ components:
           value: /projects:/home/user/go
         - name: GOCACHE
           value: /tmp/.cache
-      endpoints:
-        - name: web
-          targetPort: 8080
-          exposure: public
+      #endpoints:
+      #  - name: web
+      #    targetPort: 8080
+      #    exposure: public
       memoryLimit: 4Gi
       cpuLimit: 4000m
       cpuRequest: 1000m
