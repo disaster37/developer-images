@@ -14,8 +14,9 @@ components:
         - name: GOCACHE
           value: /tmp/.cache
       endpoints:
-        - name: 8080-tcp
+        - name: web
           targetPort: 8080
+          exposure: public
       memoryLimit: 4Gi
       cpuLimit: 4000m
       cpuRequest: 1000m
