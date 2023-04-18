@@ -32,29 +32,23 @@ components:
         apiVersion: v1
         kind: Pod
         metadata:
-          name: docker
+          name: test-pod
           labels:
-            app: docker
+            test: test-app
         spec:
           containers:
-            - image: docker:dind
-              name: docker
-              env:
-                - name: 'DOCKER_TLS_CERTDIR'
-              ports:
-                - name: tcp
-                  containerPort: 2375
-              securityContext:
-                allowPrivilegeEscalation: true
-                privileged: true
-                runAsUser: 0
-              imagePullPolicy: Always
-              volumeMounts:
-                - mountPath: /var/lib/docker
-                  name: docker-storage
-          volumes:
-            - emptyDir: {}
-              name: docker-storage
+          - name: test-container
+            image: quay.io/wto/web-terminal-tooling:next
+            resources:
+              limits:
+                memory: "128Mi"
+                cpu: "500m"
+            ports:
+              - containerPort: 8080
+            command:
+              - "tail"
+              - "-f"
+              - "/dev/null"
 
 commands:
   - id: run
