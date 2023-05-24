@@ -50,8 +50,8 @@ COPY root/ /
 RUN <<EOF
 set -euf -o pipefail
 
-LOGSTASH_VERSION="1:7.17.5-1"
-FILEBEAT_VERSION="7.16.2-1"
+LOGSTASH_VERSION="8.7.1"
+FILEBEAT_VERSION="8.7.1"
 update-crypto-policies --set LEGACY
 rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
 dnf install -y java-11-openjdk-headless logstash-${LOGSTASH_VERSION} filebeat-${FILEBEAT_VERSION} diffutils findutils
