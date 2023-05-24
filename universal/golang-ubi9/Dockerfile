@@ -27,6 +27,7 @@ ENV NODEJS_14_VERSION=14.19.0
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
 RUN source /home/user/.bashrc && nvm install v${NODEJS_VERSION} && nvm install v${NODEJS_14_VERSION} && nvm install v${NODEJS_12_VERSION} && nvm alias default v$NODEJS_VERSION && nvm use v$NODEJS_VERSION && npm install --global yarn@v1.22.17
 ENV PATH=$NVM_DIR/versions/node/v$NODEJS_VERSION/bin:$PATH
+ENV PATH=/home/user/.yarn/bin:$PATH
 ENV NODEJS_HOME_12=$NVM_DIR/versions/node/v$NODEJS_12_VERSION
 ENV NODEJS_HOME_14=$NVM_DIR/versions/node/v$NODEJS_14_VERSION
 ENV NODEJS_HOME_16=$NVM_DIR/versions/node/v$NODEJS_VERSION
@@ -45,7 +46,7 @@ ENV GOCACHE /.cache
 
 RUN <<EOF
 set -euf -o pipefail
-GO_VERSION=1.20.2
+GO_VERSION=1.20.4
 mkdir -p /go /.cache /projects
 curl -o- -L https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz | tar xz -C /go --strip-components=1
 chmod -R 777 /.cache /go /projects
@@ -110,7 +111,7 @@ EOF
 # Cloud
 
 ## oc
-ENV OC_VERSION=4.6
+ENV OC_VERSION=4.11
 RUN curl -L https://mirror.openshift.com/pub/openshift-v4/clients/oc/${OC_VERSION}/linux/oc.tar.gz | tar -C /usr/local/bin -xz \
     && chmod +x /usr/local/bin/oc
 
