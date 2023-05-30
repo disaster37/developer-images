@@ -25,30 +25,7 @@ components:
       volumeMounts:
         - name: home
           path: /profile
-  - name: docker
-    kubernetes:
-      deployByDefault: false
-      inlined: |
-        apiVersion: v1
-        kind: Pod
-        metadata:
-          name: test-pod
-          labels:
-            test: test-app
-        spec:
-          containers:
-          - name: test-container
-            image: quay.io/wto/web-terminal-tooling:next
-            resources:
-              limits:
-                memory: "128Mi"
-                cpu: "500m"
-            ports:
-              - containerPort: 8080
-            command:
-              - "tail"
-              - "-f"
-              - "/dev/null"
+  
 
 commands:
   - id: run
