@@ -33,6 +33,41 @@ RUN cd /usr/bin \
 
 RUN pip install pylint yq
 
+# Go
+RUN dnf install -y gcc
+ENV GOROOT /go
+ENV GOPATH /go
+ENV PATH $GOROOT/bin:$PATH
+ENV GOCACHE /.cache
+
+RUN <<EOF
+set -euf -o pipefail
+GO_VERSION=1.20.4
+mkdir -p /go /.cache /projects
+curl -o- -L https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz | tar xz -C /go --strip-components=1
+chmod -R 777 /.cache /go /projects
+
+go install github.com/acroca/go-symbols@latest &&\
+go install github.com/cweill/gotests/gotests@latest &&\
+go install github.com/davidrjenni/reftools/cmd/fillstruct@latest &&\
+go install github.com/haya14busa/goplay/cmd/goplay@latest &&\
+go install github.com/stamblerre/gocode@latest &&\
+mv /go/bin/gocode /go/bin/gocode-gomod &&\
+go install github.com/mdempsky/gocode@latest &&\
+go install github.com/ramya-rao-a/go-outline@latest &&\
+go install github.com/rogpeppe/godef@latest &&\
+go install github.com/sqs/goreturns@latest &&\
+go install github.com/uudashr/gopkgs/v2/cmd/gopkgs@latest &&\
+go install github.com/zmb3/gogetdoc@latest &&\
+go install honnef.co/go/tools/cmd/staticcheck@latest &&\
+go install golang.org/x/tools/cmd/gorename@latest &&\
+go install github.com/go-delve/delve/cmd/dlv@latest &&\
+go install golang.org/x/tools/gopls@latest &&\
+cd /go && wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.52.2
+EOF
+ENV GOPATH /projects
+ENV PATH $GOPATH/bin:$PATH
+
 # Applications
 
 ## Logstash-filter-verifier
