@@ -68,6 +68,15 @@ EOF
 ENV GOPATH /projects
 ENV PATH $GOPATH/bin:$PATH
 
+## docker
+RUN <<EOF
+set -euf -o pipefail
+
+dnf install -y yum-utils
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+dnf install -y docker-ce docker-ce-cli containerd.io
+EOF
+
 # Applications
 
 ## Logstash-filter-verifier
