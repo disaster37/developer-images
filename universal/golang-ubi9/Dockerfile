@@ -140,14 +140,7 @@ RUN mkdir -p /var/lib/shared/overlay-images /var/lib/shared/overlay-layers; \
 RUN mkdir -p "${HOME}"/.config/containers && \
    (echo '[storage]';echo 'driver = "vfs"') > "${HOME}"/.config/containers/storage.conf
 
-## kubectl
-RUN <<EOF
-set -euf -o pipefail
-KUBECTL_VERSION="v1.25.5"
 
-curl -L https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl -o /usr/bin/kubectl
-chmod +x /usr/bin/kubectl
-EOF
 
 ## shellcheck
 RUN <<EOF
@@ -191,43 +184,6 @@ export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 # kubens and kubectx
 kubectl krew install ns
 kubectl krew install ctx
-cd -
-rm -rf "${TEMP_DIR}"
-EOF
-
-## helm
-RUN <<EOF
-set -euf -o pipefail
-TEMP_DIR="$(mktemp -d)"
-cd "${TEMP_DIR}"
-HELM_VERSION="3.7.2"
-HELM_ARCH="linux-amd64"
-HELM_TGZ="helm-v${HELM_VERSION}-${HELM_ARCH}.tar.gz"
-HELM_TGZ_URL="https://get.helm.sh/${HELM_TGZ}"
-curl -sSLO "${HELM_TGZ_URL}"
-curl -sSLO "${HELM_TGZ_URL}.sha256sum"
-sha256sum -c "${HELM_TGZ}.sha256sum" 2>&1 | grep OK
-tar -zxvf "${HELM_TGZ}"
-mv "${HELM_ARCH}"/helm /usr/local/bin/helm
-cd -
-rm -rf "${TEMP_DIR}"
-EOF
-
-## kustomize
-RUN <<EOF
-set -euf -o pipefail
-TEMP_DIR="$(mktemp -d)"
-cd "${TEMP_DIR}"
-KUSTOMIZE_VERSION="4.3.0"
-KUSTOMIZE_ARCH="linux_amd64"
-KUSTOMIZE_TGZ="kustomize_v${KUSTOMIZE_VERSION}_${KUSTOMIZE_ARCH}.tar.gz"
-KUSTOMIZE_TGZ_URL="https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${KUSTOMIZE_VERSION}/${KUSTOMIZE_TGZ}"
-KUSTOMIZE_CHEKSUMS_URL="https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${KUSTOMIZE_VERSION}/checksums.txt"
-curl -sSLO "${KUSTOMIZE_TGZ_URL}"
-curl -sSLO "${KUSTOMIZE_CHEKSUMS_URL}"
-sha256sum --ignore-missing -c "checksums.txt" 2>&1 | grep OK
-tar -zxvf "${KUSTOMIZE_TGZ}"
-mv kustomize /usr/local/bin/
 cd -
 rm -rf "${TEMP_DIR}"
 EOF
@@ -297,14 +253,6 @@ set -euf -o pipefail
 TERRAGRUNT_VERSION="v0.35.16"
 curl -L https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT_VERSION}/terragrunt_linux_amd64 -o /usr/bin/terragrunt
 chmod +x /usr/bin/terragrunt
-EOF
-
-## dagger
-RUN <<EOF
-set -euf -o pipefail
-DAGGER_VERSION="v0.2.8"
-curl -o- -L https://github.com/dagger/dagger/releases/download/${DAGGER_VERSION}/dagger_${DAGGER_VERSION}_linux_amd64.tar.gz | tar xvz -C /usr/local/bin --strip-components=0
-chmod +x /usr/local/bin/dagger
 EOF
 
 ## buildkit

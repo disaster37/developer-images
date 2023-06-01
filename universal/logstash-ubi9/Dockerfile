@@ -68,14 +68,7 @@ EOF
 ENV GOPATH /projects
 ENV PATH $GOPATH/bin:$PATH
 
-## docker
-RUN <<EOF
-set -euf -o pipefail
 
-dnf install -y yum-utils
-yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-dnf install -y docker-ce docker-ce-cli containerd.io
-EOF
 
 # Applications
 
@@ -105,25 +98,6 @@ EOF
 
 
 # Cloud
-
-## kubectl
-RUN <<EOF
-set -euf -o pipefail
-
-cat <<EOF2 > /etc/yum.repos.d/kubernetes.repo
-[kubernetes]
-name=Kubernetes
-baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
-enabled=1
-gpgcheck=1
-repo_gpgcheck=1
-gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-EOF2
-
-dnf install -y kubectl
-curl -sSL -o ~/.kubectl_aliases https://raw.githubusercontent.com/ahmetb/kubectl-alias/master/.kubectl_aliases
-echo '[ -f ~/.kubectl_aliases ] && source ~/.kubectl_aliases' >> /home/user/.bashrc
-EOF
 
 ## shellcheck
 RUN <<EOF
@@ -169,52 +143,6 @@ kubectl krew install ns
 kubectl krew install ctx
 cd -
 rm -rf "${TEMP_DIR}"
-EOF
-
-## helm
-RUN <<EOF
-set -euf -o pipefail
-TEMP_DIR="$(mktemp -d)"
-cd "${TEMP_DIR}"
-HELM_VERSION="3.7.2"
-HELM_ARCH="linux-amd64"
-HELM_TGZ="helm-v${HELM_VERSION}-${HELM_ARCH}.tar.gz"
-HELM_TGZ_URL="https://get.helm.sh/${HELM_TGZ}"
-curl -sSLO "${HELM_TGZ_URL}"
-curl -sSLO "${HELM_TGZ_URL}.sha256sum"
-sha256sum -c "${HELM_TGZ}.sha256sum" 2>&1 | grep OK
-tar -zxvf "${HELM_TGZ}"
-mv "${HELM_ARCH}"/helm /usr/local/bin/helm
-cd -
-rm -rf "${TEMP_DIR}"
-EOF
-
-## kustomize
-RUN <<EOF
-set -euf -o pipefail
-TEMP_DIR="$(mktemp -d)"
-cd "${TEMP_DIR}"
-KUSTOMIZE_VERSION="4.3.0"
-KUSTOMIZE_ARCH="linux_amd64"
-KUSTOMIZE_TGZ="kustomize_v${KUSTOMIZE_VERSION}_${KUSTOMIZE_ARCH}.tar.gz"
-KUSTOMIZE_TGZ_URL="https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${KUSTOMIZE_VERSION}/${KUSTOMIZE_TGZ}"
-KUSTOMIZE_CHEKSUMS_URL="https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${KUSTOMIZE_VERSION}/checksums.txt"
-curl -sSLO "${KUSTOMIZE_TGZ_URL}"
-curl -sSLO "${KUSTOMIZE_CHEKSUMS_URL}"
-sha256sum --ignore-missing -c "checksums.txt" 2>&1 | grep OK
-tar -zxvf "${KUSTOMIZE_TGZ}"
-mv kustomize /usr/local/bin/
-cd -
-rm -rf "${TEMP_DIR}"
-EOF
-
-
-## dagger
-RUN <<EOF
-set -euf -o pipefail
-DAGGER_VERSION="v0.2.8"
-curl -o- -L https://github.com/dagger/dagger/releases/download/${DAGGER_VERSION}/dagger_${DAGGER_VERSION}_linux_amd64.tar.gz | tar xvz -C /usr/local/bin --strip-components=0
-chmod +x /usr/local/bin/dagger
 EOF
 
 ## buildkit

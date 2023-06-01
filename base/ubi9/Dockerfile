@@ -78,6 +78,70 @@ RUN \
     cd -; \
     rm -rf "${TEMP_DIR}"
 
+## dagger.io
+RUN <<EOF
+set -euf -o pipefail
+DAGGER_VERSION="v0.2.8"
+curl -o- -L https://github.com/dagger/dagger/releases/download/${DAGGER_VERSION}/dagger_${DAGGER_VERSION}_linux_amd64.tar.gz | tar xvz -C /usr/local/bin --strip-components=0
+chmod +x /usr/local/bin/dagger
+EOF
+
+## docker
+RUN <<EOF
+set -euf -o pipefail
+
+dnf install -y yum-utils
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+dnf install -y docker-ce docker-ce-cli containerd.io
+EOF
+
+## kubectl
+RUN <<EOF
+set -euf -o pipefail
+KUBECTL_VERSION="v1.25.5"
+
+curl -L https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl -o /usr/bin/kubectl
+chmod +x /usr/bin/kubectl
+EOF
+
+## kustomize
+RUN <<EOF
+set -euf -o pipefail
+TEMP_DIR="$(mktemp -d)"
+cd "${TEMP_DIR}"
+KUSTOMIZE_VERSION="4.3.0"
+KUSTOMIZE_ARCH="linux_amd64"
+KUSTOMIZE_TGZ="kustomize_v${KUSTOMIZE_VERSION}_${KUSTOMIZE_ARCH}.tar.gz"
+KUSTOMIZE_TGZ_URL="https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${KUSTOMIZE_VERSION}/${KUSTOMIZE_TGZ}"
+KUSTOMIZE_CHEKSUMS_URL="https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${KUSTOMIZE_VERSION}/checksums.txt"
+curl -sSLO "${KUSTOMIZE_TGZ_URL}"
+curl -sSLO "${KUSTOMIZE_CHEKSUMS_URL}"
+sha256sum --ignore-missing -c "checksums.txt" 2>&1 | grep OK
+tar -zxvf "${KUSTOMIZE_TGZ}"
+mv kustomize /usr/local/bin/
+cd -
+rm -rf "${TEMP_DIR}"
+EOF
+
+## helm
+RUN <<EOF
+set -euf -o pipefail
+TEMP_DIR="$(mktemp -d)"
+cd "${TEMP_DIR}"
+HELM_VERSION="3.7.2"
+HELM_ARCH="linux-amd64"
+HELM_TGZ="helm-v${HELM_VERSION}-${HELM_ARCH}.tar.gz"
+HELM_TGZ_URL="https://get.helm.sh/${HELM_TGZ}"
+curl -sSLO "${HELM_TGZ_URL}"
+curl -sSLO "${HELM_TGZ_URL}.sha256sum"
+sha256sum -c "${HELM_TGZ}.sha256sum" 2>&1 | grep OK
+tar -zxvf "${HELM_TGZ}"
+mv "${HELM_ARCH}"/helm /usr/local/bin/helm
+cd -
+rm -rf "${TEMP_DIR}"
+EOF
+
+
 COPY --chown=0:0 entrypoint.sh /
 RUN \
     # add user and configure it
