@@ -81,7 +81,7 @@ RUN \
 ## dagger.io
 RUN <<EOF
 set -euf -o pipefail
-DAGGER_VERSION="v0.2.8"
+DAGGER_VERSION="v0.6.1"
 curl -o- -L https://github.com/dagger/dagger/releases/download/${DAGGER_VERSION}/dagger_${DAGGER_VERSION}_linux_amd64.tar.gz | tar xvz -C /usr/local/bin --strip-components=0
 chmod +x /usr/local/bin/dagger
 EOF
