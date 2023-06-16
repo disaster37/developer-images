@@ -274,7 +274,7 @@ EOF
 ## rancher
 RUN <<EOF
 set -euf -o pipefail
-RANCHER_VERSION="v2.4.6"
+RANCHER_VERSION="v2.7.0"
 curl -o- -L https://github.com/rancher/cli/releases/download/${RANCHER_VERSION}/rancher-linux-amd64-${RANCHER_VERSION}.tar.gz | tar xvz -C /usr/local/bin --strip-components=2
 chmod +x /usr/local/bin/rancher
 EOF
