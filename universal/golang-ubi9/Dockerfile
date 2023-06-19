@@ -93,10 +93,10 @@ RUN dnf install -y java-17-openjdk-headless
 RUN <<EOF
 set -euf -o pipefail
 python3 -m pip install ansible
+python3 -m pip install ansible-lint
 python3 -m pip install molecule
 python3 -m pip install "molecule[docker]"
 python3 -m pip install "pytest-testinfra"
-python3 -m pip install "molecule-goss"
 python3 -m pip install "flake8"
 EOF
 
