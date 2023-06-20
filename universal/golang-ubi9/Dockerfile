@@ -92,12 +92,12 @@ RUN dnf install -y java-17-openjdk-headless
 ## Ansible
 RUN <<EOF
 set -euf -o pipefail
-python3 -m pip install ansible
-python3 -m pip install ansible-lint
-python3 -m pip install molecule
-python3 -m pip install "molecule[docker]"
-python3 -m pip install "pytest-testinfra"
-python3 -m pip install "flake8"
+pip install ansible
+pip install ansible-lint
+pip install molecule
+pip install molecule-docker
+pip install pytest-testinfra
+pip install flake8
 EOF
 
 ## Puppet
