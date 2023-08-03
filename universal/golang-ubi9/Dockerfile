@@ -95,7 +95,8 @@ set -euf -o pipefail
 pip install ansible
 pip install ansible-lint
 pip install molecule
-pip install molecule-docker
+pip install molecule-plugins-docker
+pip install molecule-plugins-ec2
 pip install pytest-testinfra
 pip install flake8
 EOF
