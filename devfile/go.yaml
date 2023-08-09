@@ -29,15 +29,13 @@ components:
           path: /profile
   - name: docker
     attributes:
-      pod-overrides:
-        spec:
-           container:
-             - securityContext:
-                 allowPrivilegeEscalation: true
-                 privileged: true
-                 runAsUser: 0
+      container-overrides:
+        securityContext:
+          allowPrivilegeEscalation: true
+          privileged: true
+          runAsUser: 0
     container:
-      image: alpine
+      image: docker:dind
       env:
         - name: 'DOCKER_TLS_CERTDIR'
           value: ''
