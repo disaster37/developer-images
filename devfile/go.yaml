@@ -1,6 +1,6 @@
 schemaVersion: 2.2.0
 metadata:
-  name: golang
+  name: golang2
 components:
   - name: home
     volume:
