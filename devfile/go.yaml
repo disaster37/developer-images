@@ -1,6 +1,6 @@
 schemaVersion: 2.2.0
 metadata:
-  name: golang-
+  name: golang
 components:
   - name: home
     volume:
@@ -13,10 +13,12 @@ components:
           value: /projects:/home/user/go
         - name: GOCACHE
           value: /tmp/.cache
-      #endpoints:
-      #  - name: web
-      #    targetPort: 8080
-      #    exposure: public
+        - name: DOCKER_HOST
+          value: tcp://localhost:2375
+      endpoints:
+        - name: web
+          targetPort: 8080
+          exposure: public
       memoryLimit: 4Gi
       cpuLimit: 4000m
       cpuRequest: 1000m
@@ -26,35 +28,24 @@ components:
         - name: home
           path: /profile
   - name: docker
-    kubernetes:
-      deployByDefault: true
-      inlined: |
-        apiVersion: v1
-        kind: Pod
-        metadata:
-          name: docker
-          labels:
-            app: docker
+    attributes:
+      pod-overrides:
         spec:
-          containers:
-            - image: docker:dind
-              name: docker
-              env:
-                - name: 'DOCKER_TLS_CERTDIR'
-              ports:
-                - name: tcp
-                  containerPort: 2375
-              securityContext:
-                allowPrivilegeEscalation: true
-                privileged: true
-                runAsUser: 0
-              imagePullPolicy: Always
-              volumeMounts:
-                - mountPath: /var/lib/docker
-                  name: docker-storage
-          volumes:
-            - emptyDir: {}
-              name: docker-storage
+           container:
+             - securityContext:
+                 allowPrivilegeEscalation: true
+                 privileged: true
+                 runAsUser: 0
+    container:
+      image: alpine
+      env:
+        - name: 'DOCKER_TLS_CERTDIR'
+          value: ''
+      mountSources: true
+      memoryLimit: 4Gi
+      cpuLimit: 4000m
+      cpuRequest: 1000m
+      memoryRequest: 1Gi
 
 commands:
   - id: run
