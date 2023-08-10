@@ -46,7 +46,7 @@ ENV GOCACHE /.cache
 
 RUN <<EOF
 set -euf -o pipefail
-GO_VERSION=1.20.4
+GO_VERSION=1.20.7
 mkdir -p /go /.cache /projects
 curl -o- -L https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz | tar xz -C /go --strip-components=1
 chmod -R 777 /.cache /go /projects
@@ -98,6 +98,7 @@ pip install molecule
 pip install molecule-plugins[docker]
 pip install molecule-plugins[ec2]
 pip install boto3
+pip install pywinrm
 pip install pytest-testinfra
 pip install flake8
 EOF
