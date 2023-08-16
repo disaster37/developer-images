@@ -2,9 +2,6 @@ schemaVersion: 2.2.0
 metadata:
   name: golang2
 components:
-  - name: home
-    volume:
-      size: 1Gi
   - name: tools
     container:
       image: quay.io/webcenter/developer-image:golang-ubi9-latest
@@ -24,9 +21,6 @@ components:
       cpuRequest: 1000m
       memoryRequest: 2Gi
       mountSources: true
-      volumeMounts:
-        - name: home
-          path: /profile
   - name: docker
     attributes:
       container-overrides:
