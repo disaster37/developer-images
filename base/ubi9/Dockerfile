@@ -22,7 +22,7 @@ USER 0
 # brotli, compat-openssl11 are required to run che-code
 RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm && \
     dnf update -y && \
-    dnf install -y bash diffutils git git-lfs iproute jq less lsof man nano procps p7zip p7zip-plugins bash-completion iputils \
+    dnf install -y bash diffutils git git-lfs iproute jq less lsof man nano procps p7zip p7zip-plugins bash-completion iputils sshpass \
                    perl-Digest-SHA net-tools openssh-clients rsync socat sudo time vim wget zip brotli compat-openssl11 && \
                    dnf clean all
 
