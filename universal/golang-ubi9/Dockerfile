@@ -92,11 +92,7 @@ RUN dnf install -y java-17-openjdk-headless
 ## Ansible
 RUN <<EOF
 set -euf -o pipefail
-pip install ansible
-pip install ansible-lint
-pip install molecule==v5.1.0
-pip install molecule-plugins[docker]
-pip install molecule-plugins[ec2]
+pip install ansible ansible-core ansible-compat==4.1.7 'molecule<6' molecule-plugins[docker] docker ansible-lint
 pip install boto3
 pip install pywinrm
 pip install pytest-testinfra
