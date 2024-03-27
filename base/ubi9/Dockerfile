@@ -78,6 +78,15 @@ RUN \
     cd -; \
     rm -rf "${TEMP_DIR}"
 
+## Jfrog cli
+RUN <<EOF
+set -euf -o pipefail
+
+cd /usr/local/bin
+curl -fL https://getcli.jfrog.io | sh
+chmod +x jfrog
+EOF
+
 ## dagger.io
 RUN <<EOF
 set -euf -o pipefail
