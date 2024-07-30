@@ -46,7 +46,7 @@ ENV GOCACHE /.cache
 
 RUN <<EOF
 set -euf -o pipefail
-GO_VERSION=1.22.2
+GO_VERSION=1.22.5
 mkdir -p /go /.cache /projects
 curl -o- -L https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz | tar xz -C /go --strip-components=1
 chmod -R 777 /.cache /go /projects
