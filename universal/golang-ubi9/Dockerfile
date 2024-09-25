@@ -26,8 +26,8 @@ USER 1234
 
 
 # NodeJS
-RUN mkdir -p /home/tooling/.nvm/
-ENV NVM_DIR="/home/tooling/.nvm"
+RUN mkdir -p /home/user/.nvm
+ENV NVM_DIR="/home/user/.nvm"
 ENV NODEJS_20_VERSION=20.7.0
 ENV NODEJS_18_VERSION=18.19.1
 ENV NODEJS_DEFAULT_VERSION=${NODEJS_18_VERSION}
