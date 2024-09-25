@@ -39,7 +39,7 @@ RUN source /home/user/.bashrc && \
     nvm install v${NODEJS_18_VERSION} && \
     nvm alias default v${NODEJS_DEFAULT_VERSION} && nvm use v${NODEJS_DEFAULT_VERSION} && \
     npm install --global yarn@v1.22.17 &&\
-    chgrp -R 0 /home/tooling && chmod -R g=u /home/tooling
+    chgrp -R 0 /home/user && chmod -R g=u /home/user
 ENV PATH=$NVM_DIR/versions/node/v${NODEJS_DEFAULT_VERSION}/bin:$PATH
 ENV NODEJS_HOME_20=$NVM_DIR/versions/node/v${NODEJS_20_VERSION}
 ENV NODEJS_HOME_18=$NVM_DIR/versions/node/v${NODEJS_18_VERSION}
