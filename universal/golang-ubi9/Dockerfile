@@ -16,13 +16,13 @@ LABEL description="Image with developers tools. Languages SDK and runtimes inclu
 LABEL io.k8s.display-name="devfile-developer-universal"
 LABEL io.openshift.expose-services=""
 
-
-
-USER 1234
+USER 0
 
 # $PROFILE_EXT contains all additions made to the bash environment
 ENV PROFILE_EXT=/etc/profile.d/udi_environment.sh
 RUN touch ${PROFILE_EXT} & chown 10001 ${PROFILE_EXT}
+
+USER 1234
 
 
 # NodeJS
