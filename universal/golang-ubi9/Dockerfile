@@ -20,7 +20,7 @@ USER 0
 
 # $PROFILE_EXT contains all additions made to the bash environment
 ENV PROFILE_EXT=/etc/profile.d/udi_environment.sh
-RUN touch ${PROFILE_EXT} & chown 10001 ${PROFILE_EXT}
+RUN touch ${PROFILE_EXT} & chown 1234 ${PROFILE_EXT}
 
 USER 1234
 
