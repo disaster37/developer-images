@@ -134,3 +134,5 @@ USER 0
 RUN mkdir -p /home/user && chgrp -R 0 /home && chmod -R g=u /etc/passwd /etc/group /home
 
 USER 1234
+
+ENV HOME=/home/user
