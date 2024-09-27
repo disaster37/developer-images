@@ -23,10 +23,6 @@ ENV PROFILE_EXT=/etc/profile.d/udi_environment.sh
 RUN touch ${PROFILE_EXT} & chown 1234 ${PROFILE_EXT}
 
 
-
-# We install everything to /home/tooling/ as /home/user/ may get overriden, see github.com/eclipse/che/issues/22412
-ENV HOME=/home/tooling
-
 # Keep Go for dagger
 RUN dnf install -y gcc
 ENV GOROOT /go
@@ -66,6 +62,9 @@ ENV PATH $GOPATH/bin:$PATH
 # Java
 
 USER 1234
+
+# We install everything to /home/tooling/ as /home/user/ may get overriden, see github.com/eclipse/che/issues/22412
+ENV HOME=/home/tooling
 
 RUN curl -fsSL "https://get.sdkman.io/?rcupdate=false" | bash \
     && bash -c ". /home/tooling/.sdkman/bin/sdkman-init.sh \
