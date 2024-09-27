@@ -18,6 +18,9 @@ LABEL io.openshift.expose-services=""
 
 USER 0
 
+ENV HOME=/home/tooling
+RUN mkdir -p /home/tooling/
+
 # curl already installed on ubi9
 # brotli, compat-openssl11 are required to run che-code
 RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm && \
@@ -152,6 +155,8 @@ EOF
 
 
 COPY --chown=0:0 entrypoint.sh /
+COPY --chown=0:0 .stow-local-ignore /home/tooling/
+
 RUN \
     # add user and configure it
     useradd -u 1234 -G root -d /home/user --shell /bin/bash -m user && \
@@ -165,10 +170,22 @@ RUN \
     # Set permissions on /etc/passwd and /home to allow arbitrary users to write
     chgrp -R 0 /home && \
     chmod -R g=u /etc/passwd /etc/group /home && \
-    chmod +x /entrypoint.sh
+    chmod +x /entrypoint.sh &&\
+    # Create symbolic links from /home/tooling/ -> /home/user/
+    stow . -t /home/user/ -d /home/tooling/ && \
+    # .viminfo cannot be a symbolic link for security reasons, so copy it to /home/user/
+    cp /home/tooling/.viminfo /home/user/.viminfo && \
+    # Bash-related files are backed up to /home/tooling/ incase they are deleted when persistUserHome is enabled.
+    cp /home/user/.bashrc /home/tooling/.bashrc && \
+    cp /home/user/.bash_profile /home/tooling/.bash_profile && \
+    chown 10001 /home/tooling/.bashrc /home/tooling/.bash_profile
+
+# Define user directory for binaries
+ENV PATH="/home/user/.local/bin:$PATH"
 
 USER 1234
 ENV HOME=/home/user
+
 WORKDIR /projects
 ENTRYPOINT [ "/entrypoint.sh" ]
 CMD ["tail", "-f", "/dev/null"]
