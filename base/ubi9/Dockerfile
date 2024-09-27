@@ -25,8 +25,9 @@ RUN mkdir -p /home/tooling/
 # brotli, compat-openssl11 are required to run che-code
 RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm && \
     dnf update -y && \
-    dnf install -y bash diffutils git git-lfs iproute jq less lsof man nano procps p7zip p7zip-plugins bash-completion iputils sshpass \
-                   perl-Digest-SHA net-tools openssh-clients rsync socat sudo time vim wget zip brotli compat-openssl11 && \
+    dnf install -y https://rpmfind.net/linux/epel/9/Everything/x86_64/Packages/s/stow-2.4.0-1.el9.noarch.rpm &&\
+    dnf install -y bash curl diffutils git git-lfs iproute jq less lsof man nano procps p7zip p7zip-plugins bash-completion iputils sshpass \
+                   perl-Digest-SHA net-tools openssh-clients rsync socat sudo time vim wget zip stow brotli compat-openssl11 && \
                    dnf clean all
 
 ## direnv
@@ -166,7 +167,8 @@ RUN \
     echo 'eval "$(direnv hook bash)"' >> /home/user/.bashrc &&\
     # Copy the global git configuration to user config as global /etc/gitconfig
     #  file may be overwritten by a mounted file at runtime
-    cp /etc/gitconfig /home/user/.gitconfig && \
+    cp /etc/gitconfig ${HOME}/.gitconfig && \
+    chown 1234 ${HOME}/ ${HOME}/.viminfo ${HOME}/.gitconfig ${HOME}/.stow-local-ignore && \
     # Set permissions on /etc/passwd and /home to allow arbitrary users to write
     chgrp -R 0 /home && \
     chmod -R g=u /etc/passwd /etc/group /home && \
