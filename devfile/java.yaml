@@ -1,0 +1,37 @@
+schemaVersion: 2.2.0
+metadata:
+  name: java
+components:
+  - name: tools
+    container:
+      image: quay.io/webcenter/developer-image:java-ubi9-latest
+      env:
+        - name: DOCKER_HOST
+          value: tcp://localhost:2375
+      endpoints:
+        - name: web
+          targetPort: 8080
+          exposure: public
+      memoryLimit: 20Gi
+      cpuLimit: 10000m
+      cpuRequest: 1000m
+      memoryRequest: 2Gi
+      mountSources: true
+  - name: docker
+    attributes:
+      container-overrides:
+        securityContext:
+          allowPrivilegeEscalation: true
+          privileged: true
+          runAsNonRoot: false
+          runAsUser: 0
+    container:
+      image: docker:dind
+      env:
+        - name: 'DOCKER_TLS_CERTDIR'
+          value: ''
+      mountSources: true
+      memoryLimit: 4Gi
+      cpuLimit: 4000m
+      cpuRequest: 1000m
+      memoryRequest: 1Gi

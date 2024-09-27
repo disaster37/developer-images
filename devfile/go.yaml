@@ -9,7 +9,7 @@ components:
         - name: GOPATH
           value: /projects:/home/user/go
         - name: GOCACHE
-          value: /tmp/.cache
+          value: /home/user/.cache
         - name: DOCKER_HOST
           value: tcp://localhost:2375
       endpoints:
