@@ -122,7 +122,7 @@ EOF
 
 ## oc
 ENV OC_VERSION=4.17
-RUN curl -L https://mirror.openshift.com/pub/openshift-v4/clients/oc/${OC_VERSION}/linux/oc.tar.gz | tar -C /usr/local/bin -xz \
+RUN curl -L https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz | tar -C /usr/local/bin -xz \
     && chmod +x /usr/local/bin/oc
 
 ## podman buildah skopeo
