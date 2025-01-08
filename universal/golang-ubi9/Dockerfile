@@ -57,7 +57,7 @@ ENV GOCACHE /.cache
 
 RUN <<EOF
 set -euf -o pipefail
-GO_VERSION=1.23.2
+GO_VERSION=1.23.4
 mkdir -p /go /.cache /projects
 curl -o- -L https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz | tar xz -C /go --strip-components=1
 chmod -R 777 /.cache /go /projects
@@ -78,7 +78,7 @@ go install honnef.co/go/tools/cmd/staticcheck@latest &&\
 go install golang.org/x/tools/cmd/gorename@latest &&\
 go install github.com/go-delve/delve/cmd/dlv@latest &&\
 go install golang.org/x/tools/gopls@latest &&\
-cd /go && wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.61.0
+cd /go && wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.63.4
 EOF
 ENV GOPATH /projects
 ENV PATH $GOPATH/bin:$PATH
