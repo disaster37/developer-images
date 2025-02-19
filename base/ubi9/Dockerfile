@@ -6,6 +6,10 @@ LABEL maintainer="disaster37"
 ENV HOME=/home/tooling
 USER 0
 
+# $PROFILE_EXT contains all additions made to the bash environment
+ENV PROFILE_EXT=/etc/profile.d/udi_environment.sh
+RUN touch ${PROFILE_EXT} && chown 10001 ${PROFILE_EXT}
+
 # brotli, compat-openssl11 are required to run che-code
 RUN dnf update -y && \
     dnf install -y bash bash-completion iputils sshpass \
