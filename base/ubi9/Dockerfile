@@ -238,7 +238,8 @@ RUN \
 
     # Configure divenv
     echo 'eval "$(direnv hook bash)"' >> /home/tooling/.bashrc &&\
-    chown -r user /home/tooling
+    
+    chown -R 10001 /home/tooling
 
 USER 10001
 
