@@ -1,33 +1,16 @@
 # syntax=docker/dockerfile:1.3-labs
 
-FROM registry.access.redhat.com/ubi9/ubi
-LABEL maintainer="Red Hat, Inc."
-
-LABEL com.redhat.component="devfile-base-container"
-LABEL name="devfile/base-developer-image"
-LABEL version="ubi9"
-
-#label for EULA
-LABEL com.redhat.license_terms="https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI"
-
-#labels for container catalog
-LABEL summary="devfile base developer image"
-LABEL description="Image with base developers tools. Languages SDK and runtimes excluded."
-LABEL io.k8s.display-name="devfile-developer-base"
-LABEL io.openshift.expose-services=""
-
-USER 0
+FROM quay.io/devfile/base-developer-image:ubi9-latest
+LABEL maintainer="disaster37"
 
 ENV HOME=/home/tooling
-RUN mkdir -p /home/tooling/
+USER 0
 
-# curl already installed on ubi9
 # brotli, compat-openssl11 are required to run che-code
-RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm && \
-    dnf update -y && \
-    dnf install -y bash diffutils git git-lfs iproute jq less lsof man nano procps p7zip p7zip-plugins bash-completion iputils sshpass \
-                   perl-Digest-SHA net-tools openssh-clients rsync socat sudo time vim wget zip stow brotli compat-openssl11 && \
-                   dnf clean all
+RUN dnf update -y && \
+    dnf install -y bash bash-completion iputils sshpass \
+                   brotli compat-openssl11 && \
+    dnf clean all
 
 ## direnv
 RUN <<EOF
@@ -35,51 +18,6 @@ DIRENV_VERSION=2.32.2
 curl -L https://github.com/direnv/direnv/releases/download/v${DIRENV_VERSION}/direnv.linux-amd64 -o /usr/bin/direnv
 chmod +x /usr/bin/direnv
 EOF
-
-## gh-cli
-RUN \
-    TEMP_DIR="$(mktemp -d)"; \
-    cd "${TEMP_DIR}"; \
-    GH_VERSION="2.0.0"; \
-    GH_ARCH="linux_amd64"; \
-    GH_TGZ="gh_${GH_VERSION}_${GH_ARCH}.tar.gz"; \
-    GH_TGZ_URL="https://github.com/cli/cli/releases/download/v${GH_VERSION}/${GH_TGZ}"; \
-    GH_CHEKSUMS_URL="https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_checksums.txt"; \
-    curl -sSLO "${GH_TGZ_URL}"; \
-    curl -sSLO "${GH_CHEKSUMS_URL}"; \
-    sha256sum --ignore-missing -c "gh_${GH_VERSION}_checksums.txt" 2>&1 | grep OK; \
-    tar -zxvf "${GH_TGZ}"; \
-    mv "gh_${GH_VERSION}_${GH_ARCH}"/bin/gh /usr/local/bin/; \
-    cd -; \
-    rm -rf "${TEMP_DIR}"
-
-## ripgrep
-RUN \
-    TEMP_DIR="$(mktemp -d)"; \
-    cd "${TEMP_DIR}"; \
-    RG_VERSION="13.0.0"; \
-    RG_ARCH="x86_64-unknown-linux-musl"; \
-    RG_TGZ="ripgrep-${RG_VERSION}-${RG_ARCH}.tar.gz"; \
-    RG_TGZ_URL="https://github.com/BurntSushi/ripgrep/releases/download/${RG_VERSION}/${RG_TGZ}"; \
-    curl -sSLO "${RG_TGZ_URL}"; \
-    tar -zxvf "${RG_TGZ}"; \
-    mv "ripgrep-${RG_VERSION}-${RG_ARCH}"/rg /usr/local/bin/; \
-    cd -; \
-    rm -rf "${TEMP_DIR}"
-
-## bat
-RUN \
-    TEMP_DIR="$(mktemp -d)"; \
-    cd "${TEMP_DIR}"; \
-    BAT_VERSION="0.18.3"; \
-    BAT_ARCH="x86_64-unknown-linux-musl"; \
-    BAT_TGZ="bat-v${BAT_VERSION}-${BAT_ARCH}.tar.gz"; \
-    BAT_TGZ_URL="https://github.com/sharkdp/bat/releases/download/v${BAT_VERSION}/${BAT_TGZ}"; \
-    curl -sSLO "${BAT_TGZ_URL}"; \
-    tar -zxvf "${BAT_TGZ}"; \
-    mv "bat-v${BAT_VERSION}-${BAT_ARCH}"/bat /usr/local/bin/; \
-    cd -; \
-    rm -rf "${TEMP_DIR}"
 
 ## Jfrog cli
 RUN <<EOF
@@ -107,6 +45,24 @@ yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce
 dnf install -y docker-ce docker-ce-cli containerd.io
 EOF
 
+## docker compose
+RUN <<EOF
+set -euf -o pipefail
+TEMP_DIR="$(mktemp -d)"
+cd "${TEMP_DIR}"
+COMPOSE_VERSION="1.29.2"
+COMPOSE_ARCH="Linux-x86_64"
+COMPOSE_BIN="docker-compose-${COMPOSE_ARCH}"
+COMPOSE_BIN_URL="https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/${COMPOSE_BIN}"
+curl -sSLO "${COMPOSE_BIN_URL}"
+curl -sSLO "${COMPOSE_BIN_URL}.sha256"
+sha256sum -c "${COMPOSE_BIN}.sha256" 2>&1 | grep OK
+chmod +x "${COMPOSE_BIN}"
+mv "${COMPOSE_BIN}" /usr/local/bin/docker-compose
+cd -
+rm -rf "${TEMP_DIR}"
+EOF
+
 ## kubectl
 RUN <<EOF
 set -euf -o pipefail
@@ -115,6 +71,11 @@ KUBECTL_VERSION="v1.25.5"
 curl -L https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl -o /usr/bin/kubectl
 chmod +x /usr/bin/kubectl
 EOF
+
+## oc
+ENV OC_VERSION=4.17
+RUN curl -L https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz | tar -C /usr/local/bin -xz \
+    && chmod +x /usr/local/bin/oc
 
 ## kustomize
 RUN <<EOF
@@ -153,40 +114,127 @@ cd -
 rm -rf "${TEMP_DIR}"
 EOF
 
+## Ansible
+RUN <<EOF
+set -euf -o pipefail
+pip install ansible ansible-core ansible-compat molecule molecule-plugins[docker] docker ansible-lint
+pip install boto3
+pip install pywinrm
+pip install pytest-testinfra
+pip install flake8
+EOF
 
-COPY --chown=0:0 entrypoint.sh /
-COPY --chown=0:0 .stow-local-ignore /home/tooling/
+## krew
+RUN <<EOF
+set -euf -o pipefail
+TEMP_DIR="$(mktemp -d)"
+cd "${TEMP_DIR}"
+KREW_VERSION="0.4.2"
+KREW_ARCH="linux_${TARGETARCH}"
+KREW_TGZ="krew-${KREW_ARCH}.tar.gz"
+KREW_TGZ_URL="https://github.com/kubernetes-sigs/krew/releases/download/v${KREW_VERSION}/${KREW_TGZ}"
+curl -sSLO "${KREW_TGZ_URL}"
+curl -sSLO "${KREW_TGZ_URL}.sha256"
+
+# File ${KREW_TGZ_URL}.sha256 has invalid format to be checked with sha256sum.
+# It needs to create a valid one.
+echo "$(cat ${KREW_TGZ}.sha256)  ${KREW_TGZ}" > "${KREW_TGZ}.sha256"
+
+sha256sum -c "${KREW_TGZ}.sha256" 2>&1 | grep OK
+
+tar -zxv --no-same-owner -f "${KREW_TGZ}"
+./"krew-${KREW_ARCH}" install krew
+echo 'export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"' >> ${PROFILE_EXT}
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+# kubens and kubectx
+kubectl krew install ns
+kubectl krew install ctx
+cd -
+rm -rf "${TEMP_DIR}"
+EOF
+ENV PATH="/home/tooling/.krew/bin:$PATH"
+
+## terraform-cli
+RUN <<EOF
+set -euf -o pipefail
+TEMP_DIR="$(mktemp -d)"
+cd "${TEMP_DIR}"
+TF_VERSION="1.1.2"
+TF_ARCH="linux_amd64"
+TF_ZIP="terraform_${TF_VERSION}_${TF_ARCH}.zip"
+TF_ZIP_URL="https://releases.hashicorp.com/terraform/${TF_VERSION}/${TF_ZIP}"
+TF_CHEKSUMS_URL="https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS"
+curl -sSLO "${TF_ZIP_URL}"
+curl -sSLO "${TF_CHEKSUMS_URL}"
+sha256sum --ignore-missing -c "terraform_${TF_VERSION}_SHA256SUMS" 2>&1 | grep OK
+unzip ${TF_ZIP}
+chmod +x terraform 
+mv terraform /usr/local/bin
+cd -
+rm -rf "${TEMP_DIR}"
+EOF
+
+## terragrunt-cli
+RUN <<EOF
+set -euf -o pipefail
+TERRAGRUNT_VERSION="v0.35.16"
+curl -L https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT_VERSION}/terragrunt_linux_amd64 -o /usr/bin/terragrunt
+chmod +x /usr/bin/terragrunt
+EOF
+
+## pluto
+RUN <<EOF
+set -euf -o pipefail
+PLUTO_VERSION="5.7.0"
+curl -o- -L https://github.com/FairwindsOps/pluto/releases/download/v${PLUTO_VERSION}/pluto_${PLUTO_VERSION}_linux_amd64.tar.gz | tar xvz -C /usr/local/bin --strip-components=0
+chmod +x /usr/local/bin/pluto
+EOF
+
+## rancher
+RUN <<EOF
+set -euf -o pipefail
+RANCHER_VERSION="v2.7.0"
+curl -o- -L https://github.com/rancher/cli/releases/download/${RANCHER_VERSION}/rancher-linux-amd64-${RANCHER_VERSION}.tar.gz | tar xvz -C /usr/local/bin --strip-components=2
+chmod +x /usr/local/bin/rancher
+EOF
+
+## vault
+RUN <<EOF
+set -euf -o pipefail
+VAULT_VERSION="1.9.2"
+TEMP_DIR="$(mktemp -d)"
+curl -L https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip -o ${TEMP_DIR}/vault.zip
+cd ${TEMP_DIR}
+unzip vault.zip
+mv vault /usr/bin/vault
+chmod +x /usr/bin/vault
+EOF
+
+# Configure container engine
+COPY --chown=0:0 containers.conf /etc/containers/containers.conf
+
+# Configure auto completion
+RUN <<EOF
+oc completion bash > /usr/share/bash-completion/completions/oc
+kubectl completion bash > /usr/share/bash-completion/completions/kubectl
+EOF
+
+# Python
+RUN dnf -y install python3 python3-devel python3-setuptools python3-pip nss_wrapper && \
+    dnf -y clean all --enablerepo='*'
+RUN cd /usr/bin \
+    && if [ ! -L python ]; then ln -s python3 python; fi \
+    && if [ ! -L pydoc ]; then ln -s pydoc3 pydoc; fi \
+    && if [ ! -L python-config ]; then ln -s python3-config python-config; fi
+RUN pip install pylint yq
 
 RUN \
-    # add user and configure it
-    useradd -u 1234 -G root -d /home/user --shell /bin/bash -m user && \
+    # Configure sudo
     echo "user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/user &&\
-    # Setup $PS1 for a consistent and reasonable prompt
-    echo "export PS1='\W \`git branch --show-current 2>/dev/null | sed -r -e \"s@^(.+)@\(\1\) @\"\`$ '" >> /home/user/.bashrc && \
-    echo 'eval "$(direnv hook bash)"' >> /home/user/.bashrc &&\
-    # Copy the global git configuration to user config as global /etc/gitconfig
-    #  file may be overwritten by a mounted file at runtime
-    cp /etc/gitconfig ${HOME}/.gitconfig && \
-    chown 1234 ${HOME}/ ${HOME}/.viminfo ${HOME}/.gitconfig ${HOME}/.stow-local-ignore && \
-    # Set permissions on /etc/passwd and /home to allow arbitrary users to write
-    chgrp -R 0 /home && \
-    chmod -R g=u /etc/passwd /etc/group /home && \
-    chmod +x /entrypoint.sh &&\
-    # Create symbolic links from /home/tooling/ -> /home/user/
-    stow . -t /home/user/ -d /home/tooling/ && \
-    # .viminfo cannot be a symbolic link for security reasons, so copy it to /home/user/
-    cp /home/tooling/.viminfo /home/user/.viminfo && \
-    # Bash-related files are backed up to /home/tooling/ incase they are deleted when persistUserHome is enabled.
-    cp /home/user/.bashrc /home/tooling/.bashrc && \
-    cp /home/user/.bash_profile /home/tooling/.bash_profile && \
-    chown 1234 /home/tooling/.bashrc /home/tooling/.bash_profile
 
-# Define user directory for binaries
-ENV PATH="/home/user/.local/bin:$PATH"
+    # Configure divenv
+    echo 'eval "$(direnv hook bash)"' >> /home/tooling/.bashrc &&\
 
-USER 1234
+USER 10001
+
 ENV HOME=/home/user
-
-WORKDIR /projects
-ENTRYPOINT [ "/entrypoint.sh" ]
-CMD ["tail", "-f", "/dev/null"]
