@@ -237,7 +237,8 @@ RUN \
     echo "user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/user &&\
 
     # Configure divenv
-    echo 'eval "$(direnv hook bash)"' >> /home/tooling/.bashrc
+    echo 'eval "$(direnv hook bash)"' >> /home/tooling/.bashrc &&\
+    chown -r user /home/tooling
 
 USER 10001
 
