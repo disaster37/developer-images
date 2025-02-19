@@ -12,6 +12,15 @@ RUN dnf update -y && \
                    brotli compat-openssl11 && \
     dnf clean all
 
+# Python
+RUN dnf -y install python3 python3-devel python3-setuptools python3-pip nss_wrapper && \
+    dnf -y clean all --enablerepo='*'
+RUN cd /usr/bin \
+    && if [ ! -L python ]; then ln -s python3 python; fi \
+    && if [ ! -L pydoc ]; then ln -s pydoc3 pydoc; fi \
+    && if [ ! -L python-config ]; then ln -s python3-config python-config; fi
+RUN pip install pylint yq
+
 ## direnv
 RUN <<EOF
 DIRENV_VERSION=2.32.2
@@ -219,14 +228,7 @@ oc completion bash > /usr/share/bash-completion/completions/oc
 kubectl completion bash > /usr/share/bash-completion/completions/kubectl
 EOF
 
-# Python
-RUN dnf -y install python3 python3-devel python3-setuptools python3-pip nss_wrapper && \
-    dnf -y clean all --enablerepo='*'
-RUN cd /usr/bin \
-    && if [ ! -L python ]; then ln -s python3 python; fi \
-    && if [ ! -L pydoc ]; then ln -s pydoc3 pydoc; fi \
-    && if [ ! -L python-config ]; then ln -s python3-config python-config; fi
-RUN pip install pylint yq
+
 
 RUN \
     # Configure sudo
