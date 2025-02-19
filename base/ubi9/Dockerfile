@@ -138,8 +138,8 @@ RUN <<EOF
 set -euf -o pipefail
 TEMP_DIR="$(mktemp -d)"
 cd "${TEMP_DIR}"
-KREW_VERSION="0.4.2"
-KREW_ARCH="linux_${TARGETARCH}"
+KREW_VERSION="0.4.4"
+KREW_ARCH="linux_amd64"
 KREW_TGZ="krew-${KREW_ARCH}.tar.gz"
 KREW_TGZ_URL="https://github.com/kubernetes-sigs/krew/releases/download/v${KREW_VERSION}/${KREW_TGZ}"
 curl -sSLO "${KREW_TGZ_URL}"
