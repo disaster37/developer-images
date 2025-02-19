@@ -12,7 +12,8 @@ USER 0
 ENV HOME=/home/tooling
 
 # Go
-RUN dnf install -y gcc
+RUN dnf install -y gcc &&\
+    dnf clean all
 ENV GOPATH /go
 ENV PATH /usr/local/go/bin:$GOPATH/bin:$PATH
 
@@ -28,7 +29,7 @@ go install github.com/cweill/gotests/gotests@latest &&\
 go install github.com/davidrjenni/reftools/cmd/fillstruct@latest &&\
 go install github.com/haya14busa/goplay/cmd/goplay@latest &&\
 go install github.com/stamblerre/gocode@latest &&\
-mv /usr/local/go/bin/gocode /usr/local/go/bin/gocode-gomod &&\
+mv /go/bin/gocode /go/bin/gocode-gomod &&\
 go install github.com/mdempsky/gocode@latest &&\
 go install github.com/ramya-rao-a/go-outline@latest &&\
 go install github.com/rogpeppe/godef@latest &&\
