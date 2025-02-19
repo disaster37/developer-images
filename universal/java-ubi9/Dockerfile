@@ -6,6 +6,8 @@ LABEL summary="Java developer image"
 LABEL description="Image to develop with java"
 LABEL io.k8s.display-name="Java"
 
+ENV HOME=/home/tooling
+
 # Java
 RUN curl -fsSL "https://get.sdkman.io/?rcupdate=false" | bash \
     && bash -c ". /home/tooling/.sdkman/bin/sdkman-init.sh \
@@ -65,3 +67,5 @@ RUN curl -fLo sbt https://raw.githubusercontent.com/dwijnand/sbt-extras/master/s
 RUN curl -fLo mill https://raw.githubusercontent.com/lefou/millw/main/millw && \
     chmod +x mill && \
     mv mill /usr/local/bin/
+
+ENV HOME=/home/user
