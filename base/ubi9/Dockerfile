@@ -232,14 +232,12 @@ oc completion bash > /usr/share/bash-completion/completions/oc
 kubectl completion bash > /usr/share/bash-completion/completions/kubectl
 EOF
 
-
-
 RUN \
     # Configure sudo
     echo "user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/user &&\
 
     # Configure divenv
-    echo 'eval "$(direnv hook bash)"' >> /home/tooling/.bashrc &&\
+    echo 'eval "$(direnv hook bash)"' >> /home/tooling/.bashrc
 
 USER 10001
 
