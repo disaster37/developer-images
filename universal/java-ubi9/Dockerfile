@@ -57,6 +57,8 @@ ENV PATH="/home/tooling/.sdkman/candidates/java/current/bin:$PATH"
 ENV PATH="/home/tooling/.sdkman/candidates/gradle/current/bin:$PATH"
 ENV PATH="/home/tooling/.local/share/coursier/bin:$PATH"
 
+USER 0
+
 # Scala
 RUN curl -fLo cs https://git.io/coursier-cli && \
     chmod +x cs && \
@@ -68,4 +70,5 @@ RUN curl -fLo mill https://raw.githubusercontent.com/lefou/millw/main/millw && \
     chmod +x mill && \
     mv mill /usr/local/bin/
 
+USER 10001
 ENV HOME=/home/user
