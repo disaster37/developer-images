@@ -22,7 +22,6 @@ set -euf -o pipefail
 GO_VERSION=1.24.0
 mkdir -p /go /usr/local/go
 curl -o- -L https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz | tar xz -C /usr/local/go --strip-components=1
-chmod -R 777 /go
 
 go install github.com/acroca/go-symbols@latest &&\
 go install github.com/cweill/gotests/gotests@latest &&\
@@ -41,6 +40,8 @@ go install golang.org/x/tools/cmd/gorename@latest &&\
 go install github.com/go-delve/delve/cmd/dlv@latest &&\
 go install golang.org/x/tools/gopls@latest &&\
 cd /usr/local/go && wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.63.4
+
+chmod -R 1777 "$GOPATH"
 EOF
 
 RUN chown -R 10001 /home/tooling
