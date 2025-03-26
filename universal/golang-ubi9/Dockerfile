@@ -39,7 +39,7 @@ go install honnef.co/go/tools/cmd/staticcheck@latest &&\
 go install golang.org/x/tools/cmd/gorename@latest &&\
 go install github.com/go-delve/delve/cmd/dlv@latest &&\
 go install golang.org/x/tools/gopls@latest &&\
-cd /usr/local/go && wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.63.4
+cd /usr/local/go && wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v2.0.2
 
 chmod -R 1777 "$GOPATH"
 EOF
