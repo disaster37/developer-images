@@ -19,7 +19,7 @@ ENV PATH /usr/local/go/bin:$GOPATH/bin:$PATH
 
 RUN <<EOF
 set -euf -o pipefail
-GO_VERSION=1.24.0
+GO_VERSION=1.24.3
 mkdir -p /go /usr/local/go
 curl -o- -L https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz | tar xz -C /usr/local/go --strip-components=1
 
@@ -39,7 +39,7 @@ go install honnef.co/go/tools/cmd/staticcheck@latest &&\
 go install golang.org/x/tools/cmd/gorename@latest &&\
 go install github.com/go-delve/delve/cmd/dlv@latest &&\
 go install golang.org/x/tools/gopls@latest &&\
-cd /usr/local/go && wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v2.0.2
+cd /usr/local/go && wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v2.1.6
 
 chmod -R 1777 "$GOPATH"
 EOF
