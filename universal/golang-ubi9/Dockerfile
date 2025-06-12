@@ -19,7 +19,7 @@ ENV PATH /usr/local/go/bin:$GOPATH/bin:$PATH
 
 RUN <<EOF
 set -euf -o pipefail
-GO_VERSION=1.24.3
+GO_VERSION=1.24.4
 mkdir -p /go /usr/local/go
 curl -o- -L https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz | tar xz -C /usr/local/go --strip-components=1
 
