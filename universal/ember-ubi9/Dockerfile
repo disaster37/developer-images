@@ -12,12 +12,17 @@ ENV HOME=/home/tooling
 
 
 ## Nodejs
+ENV NVM_DIR="/home/tooling/.nvm"
 RUN <<EOF
     set -e
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-    \. "$HOME/.nvm/nvm.sh"
+    mkdir -p /home/tooling/.nvm/
+    echo 'export NVM_DIR="$HOME/.nvm"' >> ${PROFILE_EXT}
+    echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> ${PROFILE_EXT}
+    source /home/user/.bashrc
     nvm install 24
     npm install -g ember-cli
+    chgrp -R 0 /home/tooling && chmod -R g=u /home/tooling
 EOF
 
 USER 10001
