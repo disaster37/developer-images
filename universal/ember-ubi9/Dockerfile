@@ -21,7 +21,7 @@ RUN <<EOF
     echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> ${PROFILE_EXT}
     source /home/user/.bashrc
     nvm install 24
-    npm install -g ember-cli
+    npm install -g ember-cli@6.5.0
     chgrp -R 0 /home/tooling && chmod -R g=u /home/tooling
 EOF
 
