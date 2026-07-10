@@ -83,6 +83,9 @@ KUBECTL_VERSION="v1.25.5"
 
 curl -L https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl -o /usr/bin/kubectl
 chmod +x /usr/bin/kubectl
+
+curl -L https://github.com/cert-manager/cert-manager/releases/download/v1.0.4/kubectl-cert_manager-linux-amd64.tar.gz | tar -C /usr/local/bin -xz \
+chmod +x kubectl-cert_manager
 EOF
 
 ## oc
