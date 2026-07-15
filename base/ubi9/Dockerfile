@@ -226,6 +226,10 @@ mv vault /usr/bin/vault
 chmod +x /usr/bin/vault
 EOF
 
+## Opencode
+RUN curl -fsSL https://opencode.ai/install | bash
+
+
 # Configure container engine
 COPY --chown=0:0 containers.conf /etc/containers/containers.conf
 
